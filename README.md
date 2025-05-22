@@ -1,5 +1,35 @@
 # Development Task: Enhance SpaceX Launch Tracker
 
+## Updated Folder Structure
+
+```md
+src/
+├── components/
+│   ├── LaunchCard/          # Each component gets its own folder
+│   │   ├── index.js         # Main export
+│   │   ├── LaunchCard.jsx   # Component logic
+│   │   ├── LaunchCard.test.ts # Tests
+│   │   └── styles.module.css # Component-specific styles
+│   └── Pagination/
+│       ├── index.js
+│       ├── Pagination.jsx
+│       ├── Pagination.test.ts
+│       └── styles.module.css
+├── hooks/                   # Custom hooks
+│   └── useLaunches.js
+├── lib/                     # Utility functions
+│   └── api.js               # API service
+├── pages/
+│   ├── _app.js
+│   ├── _document.js
+│   └── index.js             # Main page
+├── styles/
+│   ├── globals.css          # Global styles
+│   └── theme.js             # Design tokens
+└── test/                    # Test utilities
+    └── setup.js
+```
+
 Product Request: Improve User Experience and Reliability
 Background
 Welcome! We have a small internal web application, the "SpaceX Launch Tracker," which was initially developed as a quick MVP to display upcoming and past SpaceX launches using a public API. It gained more internal traction than expected, and while it serves its basic purpose, its rapid development means it's lacking some key usability features and hasn't kept pace with our standard development practices.
