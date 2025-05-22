@@ -1,6 +1,7 @@
 import { Roboto } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import Head from "next/head";
+import { Header } from "@/components/Header";
 import { LaunchCard } from "@/components/LaunchCard";
 import { Pagination } from "@/components/Pagination";
 import { useLaunches } from "@/hooks/useLaunches";
@@ -44,32 +45,32 @@ export default function Home() {
     );
 
   return (
-    <>
+    <div className={`${styles.container} ${roboto.className}`}>
       <Head>
         <title>SpaceX Launch Tracker</title>
-        <meta
-          name="description"
-          content="SpaceX launch monitoring application"
-        />
+        <meta name="description" content="SpaceX launch monitoring application" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header className={`${styles.header} ${roboto.className}`}>
-        <h1 className={styles.header__title}>Space X Launch Tracker</h1>
-      </header>
-      <main className={`${styles.main} ${roboto.className}`}>
+      
+      <Header title="Space X Launch Tracker" />
+      
+      <main className={styles.main}>
         <section role="card-container" className={styles.main__section}>
           {launches.map((launch) => (
             <LaunchCard key={launch.id} launch={launch} />
           ))}
         </section>
+      </main>
+      
+      <div className={styles.pagination}>
         <Pagination
           currentPage={currentPage}
           totalPages={meta.totalPages}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
         />
-      </main>
-    </>
+      </div>
+    </div>
   );
 }
