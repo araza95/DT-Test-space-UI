@@ -27,7 +27,7 @@ export const LaunchCard = ({ launch }) => {
       </div>
       <div className={styles.content}>
         <h2 className={styles.title}>{launch.name}</h2>
-        
+
         <div className={styles.infoGrid}>
           <div className={styles.infoItem}>
             <span className={styles.infoLabel}>Launch Date</span>
@@ -35,14 +35,18 @@ export const LaunchCard = ({ launch }) => {
           </div>
           <div className={styles.infoItem}>
             <span className={styles.infoLabel}>Status</span>
-            <div className={`${styles.status} ${styles[status]}`}>
+
+            <span
+              className={`${styles.status} ${styles[status]}`}
+              data-testid="launch-status"
+            >
               {status}
-            </div>
+            </span>
           </div>
         </div>
 
-        <p 
-          className={styles.details} 
+        <p
+          className={styles.details}
           title={launch.details || "No details available"}
         >
           {launch.details || "No details available"}

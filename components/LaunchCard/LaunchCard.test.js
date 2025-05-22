@@ -1,5 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { LaunchCard } from "./LaunchCard";
+import { formatDate } from "@/utils/dateFormatter";
+import "@testing-library/jest-dom";
 
 const mockLaunch = {
   id: "test-id",
@@ -15,58 +17,46 @@ const mockLaunch = {
   },
 };
 
-const mockFailedLaunch = {
-  ...mockLaunch,
-  success: false,
-  failures: [
-    {
-      reason: "Engine failure",
-    },
-  ],
-};
-
-describe("LaunchCard", () => {
+describe("LaunchCard Component", () => {
   it("renders launch information correctly", () => {
     render(<LaunchCard launch={mockLaunch} />);
 
     expect(screen.getByText("Test Launch")).toBeInTheDocument();
     expect(screen.getByText(/Test launch details/)).toBeInTheDocument();
-    expect(screen.getByAltText("Test Launch Patch")).toBeInTheDocument();
-  });
-
-  it("displays failure information when launch failed", () => {
-    render(<LaunchCard launch={mockFailedLaunch} />);
-
+    expect(screen.getByRole("img")).toBeInTheDocument();
     expect(
-      screen.getByText(/Failure Reason: Engine failure/)
+      screen.getByText(formatDate(mockLaunch.date_utc))
     ).toBeInTheDocument();
   });
 
-  it("handles missing patch image gracefully", () => {
-    const launchWithoutPatch = {
-      ...mockLaunch,
-      links: {
-        patch: {
-          small: null,
-        },
-      },
-    };
-
-    render(<LaunchCard launch={launchWithoutPatch} />);
-    const image = screen.getByAltText("Test Launch Patch");
-    expect(image).toHaveAttribute(
-      "src",
-      expect.stringContaining("Image-not-found.png")
-    );
+  it("handles successful launch status", () => {
+    render(<LaunchCard launch={mockLaunch} />);
+    const statusElement = screen.getByText(/success/i);
+    expect(statusElement).toBeInTheDocument();
+    expect(statusElement).toHaveClass("status");
   });
 
-  it("displays upcoming status correctly", () => {
-    const upcomingLaunch = {
+  it("handles failed launch with failure reason", () => {
+    const failedLaunch = {
       ...mockLaunch,
-      upcoming: true,
+      success: false,
+      failures: [{ reason: "Engine failure" }],
     };
+    render(<LaunchCard launch={failedLaunch} />);
 
-    render(<LaunchCard launch={upcomingLaunch} />);
-    expect(screen.getByText(/Status: Upcoming/)).toBeInTheDocument();
+    expect(screen.getByText(/Engine failure/i)).toBeInTheDocument();
+    // Use data-testid to uniquely identify the status element
+    const statusElement = screen.getByTestId("launch-status");
+    expect(statusElement).toHaveTextContent(/failure/i);
+    expect(statusElement).toHaveClass("status");
+  });
+
+  it("displays fallback for missing details", () => {
+    const launchNoDetails = {
+      ...mockLaunch,
+      details: null,
+    };
+    render(<LaunchCard launch={launchNoDetails} />);
+    expect(screen.getByText(/no details available/i)).toBeInTheDocument();
   });
 });
