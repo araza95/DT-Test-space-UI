@@ -12,8 +12,18 @@ export default function Home() {
     limit: 10,
   });
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return (
+    <div className={styles.loading}>
+      <p>Loading launches...</p>
+    </div>
+  );
+  
+  if (error) return (
+    <div className={styles.error}>
+      <p>Error: {error}</p>
+      <button onClick={() => window.location.reload()}>Retry</button>
+    </div>
+  );
 
   return (
     <>

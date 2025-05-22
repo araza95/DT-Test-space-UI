@@ -2,22 +2,11 @@ import React from "react";
 import styles from "./styles.module.css";
 import Image from "next/image";
 import fallbackImg from "../../public/Image-not-found.png";
+import { formatDate } from "@/utils/dateFormatter";
+import { getLaunchStatus } from "@/utils/launchStatus";
+
 export const LaunchCard = ({ launch }) => {
-  const getStatus = () => {
-    if (launch.success === null) return "unknown";
-    return launch.success ? "success" : "failure";
-  };
-
-  const formatDate = (date) => {
-    return date.slice(0, 10).split("-").reverse().join("-");
-  };
-
-  const getFailureReason = () => {
-    if (!launch.success && launch.failures && launch.failures.length > 0) {
-      return launch.failures[0].reason;
-    }
-    return null;
-  };
+  const { status, hasFailure, failureReason } = getLaunchStatus(launch);
 
   return (
     <article className={styles.card}>
@@ -34,9 +23,9 @@ export const LaunchCard = ({ launch }) => {
       <h2>{launch.name}</h2>
       <div className={styles.content}>
         <p>Date: {formatDate(launch.date_utc)}</p>
-        <p>Status: {getStatus()}</p>
+        <p>Status: {status}</p>
         <p>{launch.details || "No details available"}</p>
-        {getFailureReason() && <p>Failure Reason: {getFailureReason()}</p>}
+        {hasFailure && <p>Failure Reason: {failureReason}</p>}
       </div>
     </article>
   );
