@@ -16,7 +16,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const { launches, meta, loading, error } = useLaunches({
     page: currentPage,
-    limit: 10,
+    limit: 12,
   });
 
   const handleNextPage = () => {
@@ -35,13 +35,29 @@ export default function Home() {
     <div className={`${styles.container} ${roboto.className}`}>
       <Head>
         <title>SpaceX Launch Tracker</title>
-        <meta name="description" content="SpaceX launch monitoring application" />
+        <meta
+          name="description"
+          content="Track SpaceX launches, mission details, and launch history in real-time"
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="SpaceX Launch Tracker" />
+        <meta
+          property="og:description"
+          content="Track SpaceX launches, mission details, and launch history in real-time"
+        />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="SpaceX Launch Tracker" />
+        <meta
+          name="twitter:description"
+          content="Track SpaceX launches, mission details, and launch history in real-time"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <MemoizedHeader title="Space X Launch Tracker" />
-      
+
       <main className={styles.main}>
         <LaunchSection launches={launches} loading={loading} error={error} />
       </main>

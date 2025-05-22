@@ -6,9 +6,11 @@ export const LaunchSection = ({ launches, loading, error }) => {
   if (loading) {
     return (
       <section role="card-container" className={styles.section}>
-        {Array(10).fill(0).map((_, index) => (
-          <LaunchCardSkeleton key={index} />
-        ))}
+        {Array(12)
+          .fill(0)
+          .map((_, index) => (
+            <LaunchCardSkeleton key={index} />
+          ))}
       </section>
     );
   }
