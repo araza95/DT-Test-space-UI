@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const BASE_URL = "https://api.spacexdata.com/v5/launches/query";
+
+const queryOptions = {
+  select: "id name date_utc success upcoming details failures links",
+
+  sort: "date_utc",
+};
 
 export const useLaunches = ({ page = 1, limit = 10 }) => {
   const [state, setState] = useState({
@@ -9,8 +16,8 @@ export const useLaunches = ({ page = 1, limit = 10 }) => {
       page: page,
       totalPages: 0,
       hasNextPage: false,
-      hasPrevPage: false
-    }
+      hasPrevPage: false,
+    },
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,23 +26,9 @@ export const useLaunches = ({ page = 1, limit = 10 }) => {
     const fetchLaunches = async () => {
       try {
         setLoading(true);
-        const response = await fetch(BASE_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: {},
-            options: {
-              page,
-              limit,
-              sort: { date_utc: "desc" },
-              populate: ["rocket", "launchpad"],
-            },
-          }),
+        const { data } = await axios.post(BASE_URL, {
+          options: { ...queryOptions, limit, page },
         });
-
-        const data = await response.json();
 
         setState({
           docs: data.docs,
@@ -43,11 +36,11 @@ export const useLaunches = ({ page = 1, limit = 10 }) => {
             page: data.page,
             totalPages: data.totalPages,
             hasNextPage: data.hasNextPage,
-            hasPrevPage: data.hasPrevPage
-          }
+            hasPrevPage: data.hasPrevPage,
+          },
         });
       } catch (err) {
-        setError(err.message);
+        setError(err?.response?.data?.message || err.message);
       } finally {
         setLoading(false);
       }
@@ -60,6 +53,6 @@ export const useLaunches = ({ page = 1, limit = 10 }) => {
     launches: state.docs,
     meta: state.meta,
     loading,
-    error
+    error,
   };
 };
