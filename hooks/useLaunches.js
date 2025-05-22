@@ -1,13 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { API_CONFIG, STATUS_MESSAGES } from "@/lib/config";
 
-// Move API constants to a separate config file
-const BASE_URL = "https://api.spacexdata.com/v5/launches/query";
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Move query options to a separate constants file
-const QUERY_OPTIONS = {
-  select: "id name date_utc success upcoming details failures links",
-  sort: "date_utc",
+const fetchWithRetry = async (
+  url,
+  options,
+  retries = API_CONFIG.RETRY_ATTEMPTS
+) => {
+  try {
+    const response = await axios.post(url, options);
+    return response.data;
+  } catch (error) {
+    if (retries > 0 && error.response?.status >= 500) {
+      await sleep(API_CONFIG.RETRY_DELAY);
+      return fetchWithRetry(url, options, retries - 1);
+    }
+    throw error;
+  }
 };
 
 /**
@@ -17,7 +28,7 @@ const QUERY_OPTIONS = {
  * @param {number} params.limit - The number of items per page
  * @returns {Object} The launches data, meta information, loading state and error
  */
-export const useLaunches = ({ page = 1, limit = 10 }) => {
+export const useLaunches = ({ page = 1, limit = API_CONFIG.DEFAULT_LIMIT }) => {
   const [state, setState] = useState({
     docs: [],
     meta: {
@@ -30,37 +41,49 @@ export const useLaunches = ({ page = 1, limit = 10 }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchLaunches = async () => {
-      try {
-        setLoading(true);
-        const { data } = await axios.post(BASE_URL, {
-          options: { ...QUERY_OPTIONS, limit, page },
-        });
+  const fetchLaunches = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        setState({
-          docs: data.docs,
-          meta: {
-            page: data.page,
-            totalPages: data.totalPages,
-            hasNextPage: data.hasNextPage,
-            hasPrevPage: data.hasPrevPage,
-          },
-        });
-      } catch (err) {
-        setError(err?.response?.data?.message || err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const data = await fetchWithRetry(API_CONFIG.BASE_URL, {
+        options: {
+          ...API_CONFIG.QUERY_OPTIONS,
+          limit,
+          page,
+        },
+      });
 
-    fetchLaunches();
+      setState({
+        docs: data.docs,
+        meta: {
+          page: data.page,
+          totalPages: data.totalPages,
+          hasNextPage: data.hasNextPage,
+          hasPrevPage: data.hasPrevPage,
+        },
+      });
+    } catch (err) {
+      const errorMessage = err?.response?.data?.message || err.message;
+      setError(errorMessage || STATUS_MESSAGES.ERROR);
+    } finally {
+      setLoading(false);
+    }
   }, [page, limit]);
+
+  useEffect(() => {
+    fetchLaunches();
+  }, [fetchLaunches]);
+
+  const retry = useCallback(() => {
+    fetchLaunches();
+  }, [fetchLaunches]);
 
   return {
     launches: state.docs,
     meta: state.meta,
     loading,
     error,
+    retry,
   };
 };
