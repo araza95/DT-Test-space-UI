@@ -51,6 +51,7 @@
 .infoLabel {
   color: #718096;
   font-size: 0.8rem;
+  margin-right: 0.5rem;
 }
 
 .details {
@@ -196,5 +197,27 @@
 
   .content {
     gap: 8px;
+  }
+}
+
+/* Skeleton Loading CSS*/
+/* CSS Copied from Nazariy medium blog*/
+
+.skeleton {
+  pointer-events: none;
+}
+
+.skeletonPulse {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }

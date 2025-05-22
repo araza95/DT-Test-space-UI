@@ -8,7 +8,6 @@
 
 .main {
   margin-top: 4rem; /* Header height */
-  margin-bottom: 4rem; /* Pagination height */
   flex: 1;
   overflow-y: auto;
   padding: 2rem 1rem;
