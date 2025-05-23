@@ -9,6 +9,7 @@ import { useState, memo } from "react";
 
 const roboto = Roboto({ subsets: ["latin"], weight: ["300", "400"] });
 
+// Memoize the components to prevent unnecessary re-renders
 const MemoizedHeader = memo(Header);
 const MemoizedPagination = memo(Pagination);
 
@@ -47,8 +48,6 @@ export default function Home() {
           content="Track SpaceX launches, mission details, and launch history in real-time"
         />
         <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="SpaceX Launch Tracker" />
         <meta
           name="twitter:description"
           content="Track SpaceX launches, mission details, and launch history in real-time"

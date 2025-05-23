@@ -1,6 +1,8 @@
-import React from 'react';
-import styles from './styles.module.css';
+import React from "react";
+import styles from "./styles.module.css";
 
+/* Skeleton Loading Component*/
+/* Component used from Nazariy medium blog*/
 export const LaunchCardSkeleton = () => {
   return (
     <article className={`${styles.card} ${styles.skeleton}`}>

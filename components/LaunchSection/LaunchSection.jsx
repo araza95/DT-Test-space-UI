@@ -19,6 +19,7 @@ export const LaunchSection = ({ launches, loading, error }) => {
     return (
       <div className={styles.error}>
         <p>Error: {error}</p>
+        {/* Retry: If the user clicks on the button, reload the page */}
         <button onClick={() => window.location.reload()}>Retry</button>
       </div>
     );
